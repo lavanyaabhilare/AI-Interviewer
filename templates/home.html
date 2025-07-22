@@ -1,0 +1,678 @@
+{% load static %}
+
+<!DOCTYPE HTML>
+<!--
+	Escape Velocity by HTML5 UP
+	html5up.net | @ajlkn
+	
+    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<style>
+    .up {
+        transform: rotate(-135deg);
+        -webkit-transform: rotate(-135deg);
+      }
+
+      .arrow {
+        border: solid black;
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+      }
+      
+
+</style>
+<head>
+    <title>Intelligent.AI</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        .popup{
+            position: absolute;
+            box-shadow: 5px 5px 5px grey;
+            justify-content: center;
+            z-index: 10;
+            margin: 13.4% 20% 20% 20%;
+            padding: 10px;
+            background-color:white;
+            border: 2px solid rgb(0, 153, 255);
+            border-radius: 7px;
+            align-items: center;
+            display: flex;
+            max-height: 150px;
+            max-width: 40%;
+            min-height: 130px;
+            min-width: 35%;
+            color: rgb(0, 255, 42);
+        }
+        .main_popup{
+            
+            visibility: hidden;
+            z-index: 10;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            height: 30%;
+            margin-top: 10px;
+            padding: 5%;
+            position: absolute;
+            
+        }
+    
+    </style>
+    
+    
+</head>
+
+
+<body class="homepage is-preload">
+
+    <div class="main_popup">
+        <div class="popup">
+            <span class="material-icons" style="color: red;">warning</span>
+            <h6 id="Error_Messgae"></h6>
+            
+        </div>
+    </div>
+
+
+
+
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <section style="height: 400px;" id="header" class="wrapper">
+
+            <!-- Logo -->
+            <div id="logo">
+                <h1><a href="about.html"> HIREBOT.IO </a></h1>
+                <p>An AI based virtual interviewer.</p>
+            </div>  
+
+
+            <!-- Nav -->
+            <nav id="nav">
+                <ul style="border: 2px solid grey; border-radius: 16px;">
+
+                    <style>
+                        #myaccount_list {
+                            border: 1px solid gray;
+                            border-radius: 16px;
+                            margin: 3px;
+                            padding: 2px;
+                            text-align: center;
+                        }
+                    </style>
+
+
+                    <li class="current"><a href="#">Home</a></li>
+                    <li ><a href="start_interview">Start Interview</a></li>
+                    <li id="user_active">
+                        <!-- <a href="#main" onclick="show_form_section()"> Login </a> -->
+                    
+                        <a href="#" id="NameofUser"> {{ request.user.first_name }} </a>
+                        <ul id="myaccount_list">
+                            <li><a href="#" onclick="main_div_toggle()"> Profile </a></li>
+                            <li><a href="user_logout"> Logout </a></li>
+                        </ul>
+                    </li>
+
+                    <!-- scripts for fadeToggle main div  -->
+                    <script type="text/javascript">
+
+                        function main_div_toggle() {
+                            console.log("fadeToggle(1) main div");
+                            $("#main").fadeToggle(1);
+                        }
+
+
+                    </script>
+
+                </ul>
+
+                <!-- <p>logo</p> -->
+
+            </nav>
+
+        </section>
+
+
+        <!-- section for user profile display and edit -->
+        <section style="background: #f0f8ff;" id="main" class="wrapper style2">
+            <div style="background: #f0f8ff;" class="title"> Your Profile </div>
+            <div class="container">
+
+
+                <style>
+
+                    #dp_img{
+                        width: 250px;
+                        height: 250px;
+
+
+                    }
+                    .profile_details {
+                        justify-content: left;
+                        border: 3px solid grey;
+                        padding: 10px;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    #close_main_div_icon {
+                        margin-right: 5px;
+                        margin-top: 5px;
+                        position: absolute;
+                        right: 0.1%;
+                        top: 1%;
+                        cursor: pointer;
+                    }
+
+                    .profile_d_input {
+                        border: 1px solid grey;
+                        margin: 3px;
+                        border-radius: 7px;
+                        padding: 3px 10px 3px 10px;
+                        color: black;
+                    }
+
+                    .all_lables {
+                        color: black;
+                    }
+
+                    #user_profile_picture {
+                        border: 2px solid green;
+                        border-radius: 50px;
+                        height: 100px;
+                        width: 100px;
+                        text-align: center;
+                    }
+
+                </style>
+
+                <span id="close_main_div_icon" onclick="close_main_div()" class="material-icons">cancel</span>
+
+                
+                
+                  <!-- <script>
+                      
+                      var loadFile = function (event) {
+                          var image = document.getElementById("output");
+                          image.src = URL.createObjectURL(event.target.files[0]);
+                          
+                        };
+                        
+                </script> -->
+                        <br>
+                               <!-- new profile details form start -->
+                
+                <style>
+
+                    .row_profile_details {
+                        margin-left: 10%;
+                    }
+
+                    .form-control {
+                        width: 70%;
+
+                    }
+                    #remove_dp_icon{
+                        cursor: pointer;
+                        display: flex;
+                        align-items: left;
+                        justify-content: left;
+                    }
+                </style>
+
+                <div class="row_profile_details">
+                    <div class="col-md-6">
+                        
+                        <h3 class="my-2">Personal Information</h3>
+
+                        <br>
+                        {%if profile_img == True %}
+                        <img id="dp_img" src="{% static 'images/NoProfile.png' %}" alt="empty" />                   
+                        {% else %}
+                        <img id="dp_img" src="{{user_data.image_dp}}" alt="empty" />
+                        <br><br>
+                        <div id="remove_dp_icon" onclick="removeDP()">
+                            <span style="font-size: 36px;" class="material-icons">delete</span><br>
+                            <p>Remove Picture</p>
+                        </div>
+                        {% endif %}
+
+                        <br>
+                        <br>
+                        <br>
+                        <input type="file" id="upload_image" onchange="collectImage(event)" />
+                        <!-- <input type="file" id="upload_image"/> -->
+                        
+                        <br>
+                        <br>
+
+
+                        <form  id="update_info" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            
+                            
+                          
+                            <!-- <a href="#" id="remove_profile" onclick="removeDP()">Remove Profile Photo</a > -->
+                                <!-- <span class="material-icons-outlined">  remove_circle_outline  </span> -->
+                            
+                            <input type="text" id="firstNameField" placeholder="Enter First Name" value="{{request.user.first_name}}"><br>
+                            <input type="text" id="lastnameFiled" placeholder="Enter Last Name" value="{{request.user.last_name}}" ><br>
+                            <input type="text" id="bioField" placeholder="Bio" value="{{user_data.bio}}"><br>
+                            <input type="text" id="contactField" placeholder="Contact No" value="{{user_data.contact}}"><br>
+                            <input type="text" id="highest_qualificationField" placeholder="Highest Qualification" value="{{user_data.highest_qualification}}"><br>
+                            <!-- <input type="text" id="genderField" placeholder="Gender" value="{{user_data.gender}}" ><br> -->
+                            <!-- <input type="file" name="imageField" id="imageField"><br> -->
+                            <!-- <label for="gender"> Select you gender</label> -->
+                            <select name="gender" id="genderField" >
+                                <option id="opt1" value="Gender">Gender</option>
+                                <option id="opt2" value="Male">Male</option>
+                                <option id="opt3" value="Female">Female</option>
+                                <option id="opt4" value="Other">Other</option>
+                            </select>
+                            
+                            
+                            <br>
+                            <br>
+                            <br>
+                            
+                            
+                            
+                            <!-- <button type="submit">Save</button> -->
+                            
+                            
+                            
+
+                        </form> 
+                       
+                
+                    </div>
+                </div>
+                
+                <!-- new profile details form end -->
+
+                <!-- ####### Updating User Data Using  AJAX #############-->
+                 <script type="text/javascript">
+                     console.log("Printing JSON Data....","{{user_data.gender}}")
+                    gender_var="{{user_data.gender}}"
+                     switch(gender_var)
+                     {
+                         
+                         case "Gender":
+                         $("#opt1").attr("selected","selected")
+                         break;
+                         case "Male":
+                         $("#opt2").attr("selected","selected")
+                         break;
+                         case "Female":
+                         $("#opt3").attr("selected","selected")
+                         break;
+                         case "Other":
+                         $("#opt4").attr("selected","selected")
+                         break;
+                         default:
+                         $("#opt1").attr("selected","selected")
+                         break;
+
+
+
+                     }
+                     remove_picture=false
+                    function removeDP()
+                    {
+
+                        $("#remove_dp_icon").fadeOut(1);
+                        console.log("BEfore",remove_picture)
+                        remove_picture=true
+                        console.log("After",remove_picture)
+                        document.getElementById('dp_img').src = "{% static 'images/NoProfile.png' %}";
+                        Image_ch("NULL",image_change)
+                    }
+
+
+
+                    $("#main").fadeOut(1)
+
+                    let url;
+                    let base="";
+                    let image_change=false;
+                    
+                    
+                    const collectImage=(event)=>{
+                        
+                        let image = event.target.files[0];
+                        console.log(image);
+                        $("#remove_dp_icon").fadeIn(1);
+                        remove_picture=false
+                        url = URL.createObjectURL(image);
+                        console.log(url) 
+                        console.log("Length of URL"+url.length)
+                        //img id is id, use 
+                        document.getElementById('dp_img').src = url;
+                        // Convert image to base 64
+                        
+                        image_change=true;
+                        $("#remove_dp_icon").fadeIn(1);
+
+
+                        let reader = new FileReader();
+                        //put image into file reader
+                        reader.readAsDataURL(image);
+                        //when image loads get the result in base64
+                        reader.onload=function(){ 
+                            console.log(reader.result);
+                            base = reader.result;
+                        //  document.getElementById('dp_img').src = base;
+                        image_change=false;
+                            console.log("URL is",url)   
+                            Image_ch(base,image_change)
+                            
+                        
+                    }
+                    
+   /* Send base variable to backend and save inside the DB having column Long Text property to save the long text*/
+   
+   
+    
+ }
+ 
+                    function Image_ch(base,image_change){
+
+                        $.ajax({
+                            type:"POST",
+                            url:'save_image',
+                            data:{"image":base,
+                                "image_change":image_change,
+                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                            
+                        },
+                        success: function (response) {
+                            console.log("Printing Stataus iamage")
+                            console.log(response.status);
+                            $('#upload_image').val('');
+                        }
+
+                        })
+                    } 
+                        
+                    //$(document).on('submit','#update_info',function(e){
+                    $("#update_info").change(function(e){
+
+                                                
+                        e.preventDefault();
+                        
+                        
+                        
+
+                        var first_name=$("#firstNameField").val()
+                        var last_name=$("#lastnameFiled").val()
+                        var bio=$("#bioField").val()
+                        //var gender=$("#genderField").val()
+                        var highest_qualification=$("#highest_qualificationField").val()
+                        var contact=$("#contactField").val()
+
+                        //var image_change=document.getElementById('dp_img').src;
+
+
+                        var gender = $('#genderField').find(":selected").text();
+                        console.log("After Gender",gender)
+                        //var image = $('#imageField')[0].files;
+                        console.log(first_name)
+                        console.log(last_name)
+                        console.log(bio)
+                        console.log(contact)
+                        console.log(highest_qualification)
+                        console.log("Data are Stored");
+                        console.log("remove_pic",remove_picture)
+                        count=0
+                        console.log("image_change",image_change)
+                        console.log("base",base)
+                                        
+
+                        $.ajax({
+
+                            type: 'POST',
+                            url: "update_user_info",
+                            data: {
+                                'first_name':first_name,
+                                'last_name':last_name,
+                                'bio':bio,
+                                'gender':gender,
+                                'highest_qualification':highest_qualification,
+                                'contact':contact,
+                                //'remove_picture':remove_picture,
+                                //'image_url':url,
+                                //'image':base,
+                                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                            },
+                            success: function (response) {
+                                console.log(response);
+                            }
+
+                        });
+
+                    });
+
+                </script> 
+
+                <script type="text/javascript">
+
+                    //$("#main").fadeOut(1);
+
+                    function close_main_div() {
+                        console.log("close_main_div() running...");
+                        $("#main").fadeOut(1);
+                    }
+
+
+                </script>
+
+            </div>
+        </section>
+
+
+
+
+
+
+        <!-- Intro -->
+        <section id="intro" class="wrapper style1">
+            <div class="title">Introduction</div>
+            <div class="container">
+                <p class="style2">
+                    Artificial interviewer bot who takes actual interviews.<br class="mobile-hide" />
+                </p>
+                <p class="style3">It's <strong>Smart</strong>, built on <strong>HTML, CSS, Javascript, Python</strong> 
+                    and It is build for peoples who are not able to give interviews properly.
+                    It is <strong>Free</strong> And easy to use. After your interview it will give you a proper report of your interview.
+                    Use it and share your reviews.
+                </p>
+                <ul class="actions">
+                       <li><a href="#main" class="button style3 large" onclick="show_signup_form()">Proceed</a></li>
+                </ul>
+            </div>
+        </section>
+
+
+
+        
+
+
+        <!-- Footer -->
+        <section id="footer" class="wrapper">
+            <div class="title">About us</div>
+            <div class="container">
+                <header class="style1">
+                    <h2>HIREBOT.IO</h2>
+                    <p>
+                        Share your reviews.! Thanks for visiting us.!
+                    </p>
+                </header>
+                <div class="row">
+                    <div class="col-6 col-12-medium">
+
+                        <!-- Contact Form -->
+                        <section>
+                            <form method="POST" id="short_reviews_email_form">
+                                <div class="row gtr-50">
+                                    <div class="col-6 col-12-small">
+                                        <input type="text" name="name" id="contact-name" placeholder="Name" />
+                                    </div>
+                                    <div class="col-6 col-12-small">
+                                        <input type="email" name="email" id="contact-email" placeholder="Email" />
+                                    </div>
+                                    <div class="col-12">
+                                        <textarea name="message" id="contact-message"
+                                            placeholder="Write your reviews or about bugs and suggetions..."
+                                            rows="4"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <ul class="actions">
+                                            <li><input id="contact-button" type="submit" class="style1" value="Send" />
+                                            </li>
+                                            <li><input type="reset" class="style2" value="Reset" /></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <script type="text/javascript">
+
+                                $(document).on('submit', '#short_reviews_email_form', function (e) {
+                                    e.preventDefault();
+
+                                    var msg_sender_name = $("#contact-name").val();
+                                    var msg_sender_email = $("#contact-email").val();
+                                    var msg_sender_message = $("#contact-message").val();
+                                    var name_regex = /^[a-zA-Z]+$/;
+                                    var email_regex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                                    var correct_name, correct_email = false;
+
+                                    if (email_regex.test(msg_sender_email)) {
+                                        correct_email = true;
+                                        $("#contact-email").css('border', '2px solid green');
+                                        //alert("correct email");
+                                    }
+                                    else {
+                                        correct_email = false;
+                                        $("#contact-email").css('border', '2px solid red');
+                                        //alert("incorrect email");
+                                    }
+
+                                    if (name_regex.test(msg_sender_name)) {
+                                        correct_name = true;
+                                        $("#contact-name").css('border', '2px solid green');
+                                        //alert("correct email");
+                                    }
+                                    else {
+                                        correct_name = false;
+                                        $("#contact-name").css('border', '2px solid red');
+                                        //alert("incorrect email");
+                                    }
+
+                                    if (correct_name && correct_email) {
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: 'short_reviwes',
+                                            data: {
+                                                'msg_sender_name': msg_sender_name,
+                                                'msg_sender_email': msg_sender_email,
+                                                'msg_sender_message': msg_sender_message,
+                                                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                                            },
+                                            success: function (response) {
+                                                console.log(response);
+                                            }
+                                        })
+                                    }
+
+
+                                })
+
+                            </script>
+
+                        </section>
+                    </div>
+
+
+                    <div class="col-6 col-12-medium">
+
+                        <section class="feature-list small">
+                            <div class="row">
+                                <div class="col-6 col-12-small">
+                                    <section>
+                                        <h3 class="icon solid fa-home">Mailing Address</h3>
+                                        <p>
+                                           Don Bosco Institute of Technology, Kurla
+                                        </p>
+                                    </section>
+                                </div>
+                                <div class="col-6 col-12-small">
+                                    <section>
+                                        <h3 class="icon solid fa-comment">Social</h3>
+                                        <p>
+                                            <a href="#">Facebook</a><br />
+                                            <a href="#">Linkedin</a><br />
+                    
+                                        </p>
+                                    </section>
+                                </div>
+                                <div class="col-6 col-12-small">
+                                    <section>
+                                        <h3 class="icon solid fa-envelope">Email</h3>
+                                        <p>
+                                            <a href="#">hirebot.io@ gmail.com</a>
+                                        </p>
+                                    </section>
+                                </div>
+                                <div class="col-6 col-12-small">
+                                    <section>
+                                        <h3 class="icon solid fa-phone">Phone</h3>
+                                        <p>
+                                            8262015822 <br>
+                                            8928668892
+                                        </p>
+                                    </section>
+                                </div>
+                            </div>
+                        </section>
+
+                    </div>
+                </div>
+                <div id="copyright">
+                 
+                    <p>HIREBOT.IO &copy; 2024 | All Rights Resevered </p>
+
+
+                </div>
+
+
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.dropotron.min.js' %}"></script>
+    <script src="{% static 'assets/js/browser.min.js' %}"></script>
+    <script src="{% static 'assets/js/breakpoints.min.js' %}"></script>
+    <script src="{% static 'assets/js/util.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+</html>

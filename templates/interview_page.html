@@ -1,0 +1,1375 @@
+
+
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+   
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+   
+   <!-- For Face Detection -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+    
+
+    <title>Interview UI</title>
+
+
+    <style>
+
+        body {
+            background-color: #202124;
+            overflow: hidden;
+        }
+
+        .main, .start_meet_div, .close_meet_div{
+            height: 100vh;
+            width: 100vw;
+            background-color:#202124;
+            display: flex;
+            justify-content: center;
+            align-items:center;
+            flex-direction: column;
+        }
+
+        .video_div, #MainVideo {
+            background-color: #303030;
+            
+            justify-content: center;
+            height: 85%;
+            width: 82%;
+            margin-right: 5%;
+            margin-left: 5%;
+            border: 5px solid blue;
+            border-radius: 40px;
+            padding: 1px;
+            object-fit: fill;
+        }
+
+        .buttons_div {
+            justify-content: center;
+            height: 15%;
+            width: 100%;
+            align-items: center;
+            display: flex;
+            background-color: #101010;
+            margin-top: 10px;
+        }
+
+        .camera_div, #web_cam, #video_element, #canvas{
+            position: absolute;
+
+            right: 10%;
+            bottom: 15%;
+            border: 3px solid white;
+            height: 170px;
+            width: 250px;
+            border-radius: 25px;
+            z-index: 10;
+            background-color: #101010;
+            object-fit: unset;
+        }
+
+        #video_element{
+            display: none;
+        }
+
+        .material-icons {
+            background-color: #282828;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+            font-size: 25px;
+            padding: 10px;
+            border-radius: 30px;
+            color: white;
+            margin-left: 12px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        #end_meet_btn {
+            background-color: green;
+            padding-left: 2%;
+            padding-right: 2%;
+            display: flex;
+            vertical-align: middle;
+        }
+
+        #end_meet_btn:hover {
+            background-color: #ff0000;
+        }
+
+        .material-icons:hover {
+            background-color: #484848;
+        }
+
+        .start_meet, .close_meet{
+            margin: 5% ;
+            padding: 5%;
+            border: 3px solid black;
+            background-color: #303030;
+            justify-content: center;
+            height: 85%;
+            width: 70%;
+            border-radius: 40px;
+            text-align: center;
+            
+        }
+
+        .start_btn, .close_btn,.Download_class,.start_btn_load{
+            border: 2px solid red;
+            text-align: center;
+            height: 20%;
+            width: 30%;
+            border-radius: 10px;
+            background-color: aquamarine;
+        }
+
+        .Download_class{
+            padding-top: 20px;
+            padding-bottom: 20px;
+            padding: left 20px; ;
+        }
+
+        .start_btn:hover {
+            background-color: #e97770;
+        }
+        
+        .close_btn:hover{
+            background-color: #e97770;
+        }
+        .Download_class:hover{
+            background-color: #e97770;
+        }
+
+        .instructions_lines {
+            color: white;
+            font-size: larger;
+            font-weight: 500;
+            margin-top: 0%;
+        }
+
+        #permission_denied {
+            font-size: larger;
+            color: white;
+            margin-top: 9%;
+            padding: 3%;
+            font-weight: 400;
+        }
+
+    </style>
+
+    
+
+</head>
+<style>
+
+    .popup{
+        position: absolute;
+        box-shadow: 5px 5px 5px grey;
+        justify-content: center;
+        z-index: 10;
+        margin: 13.4% 20% 20% 20%;
+        padding: 10px;
+        background-color:white;
+        border: 2px solid rgb(0, 153, 255);
+        border-radius: 7px;
+        align-items: center;
+        display: flex;
+        max-height: 150px;
+        max-width: 40%;
+        min-height: 130px;
+        min-width: 35%;
+        color: rgb(0, 255, 42);
+    }
+    .main_popup{
+        
+        visibility: hidden;
+        z-index: 10;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        height: 30%;
+        margin-top: 10px;
+        padding: 5%;
+        position: absolute;
+        
+    }
+
+    #return_home,#return_home_1{
+     padding: 10px;
+     justify-content: center;
+     align-items: center;
+     display: flex;
+     flex-direction: column;   
+     padding-left: 20px; 
+     padding-right: 20px;
+
+    }
+    #final_icon_div{
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        padding: 10px;
+
+          
+       
+    }
+    #Timer{
+        position: absolute;
+        right: 1%;
+        top:3%;
+        color: white;
+        border: 2px solid black;
+        padding: 3px 7px 3px 7px;
+        border-radius: 5px;
+        background-color: gray;
+        min-width: 60px;
+        min-height: 35px;
+        max-width: 80px;
+        max-height: 40px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        
+
+    }
+
+    #caption_div{
+        
+        position:absolute;
+        bottom: 9%;
+        text-align: center;
+       padding: 30px 400px 50px 400px;
+        color: white;
+        width: 100%;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+        z-index: 10;
+    }
+
+</style>
+
+<body>
+<div id="timer_div">
+<p id="Timer"></p>
+</div>
+    
+    <div class="main_popup">
+        <div class="popup">
+            <span class="material-icons" style="color: red;">
+                warning
+                </span>
+            <h6 id="Error_Messgae"></h6>
+            
+        </div>
+    </div>
+
+
+    {% csrf_token %}
+
+
+        
+        <video id="web_cam" autoplay="" height="100%" width="100%" muted="" style="visibility:hidden;" ></video>  
+
+        <div id="caption_div">
+            <h5 id="caption_text">Caption....... </h5>
+        </div>
+       
+    <div class="main">
+        <p></p>
+
+        
+        <video width="100%" height="100%" id="MainVideo">
+            <source src="{% static 'videos/intro.mp4' %}" type="video/mp4">
+        </video>
+
+        
+        <canvas id="canvas" width="600px" height="400px" style="visibility: hidden;"></canvas>
+
+
+
+        <!-- <br> -->
+        
+        <div class="buttons_div">
+            <span id="download_btn" class="material-icons" onclick="gotohome()">home</span>
+                   
+            <span id="mic_btn" class="material-icons" onclick="mic_toggle()">mic</span>
+            <span id="camera_btn" class="material-icons" onclick="camera_toggle()">videocam</span>
+            <span id="end_meet_btn" class="material-icons" onclick="end_call()">call</span>
+            <span id="caption_btn" class="material-icons" onclick="caption_toggle()">closed_caption</span>
+                
+
+            <!-- <span id="more_options" class="material-icons" >more_vert</span> -->
+        </div>  
+    </div>
+        
+
+    <div class="start_meet_div">
+
+        <div class="start_meet">
+
+            <p class="instructions_lines">Please grant all permissions for better experience ! <br> </p>
+            <p class="instructions_lines" style="font-weight: 300;">
+            Please read <a href="pp">Privacy Policy</a> & <a href="tc">Terms of Use</a> 
+            <!-- And <br> -->
+            <!-- please accept the <a href="#">Agreement</a> to continue this service. -->
+            </p>
+            
+            <p class="instructions_lines"> <input id="agree_to_terms" type="checkbox">   I have read all the instructions and agree to all conditions.!</p>
+
+            <br>
+            <button class="start_btn" id="Start_Interivew_Id">
+            <b>Start Interview</b>
+            </button>
+            <style>
+                #start_int_load{
+                    height: 100%;
+                    
+                }
+
+            </style>
+            <button id="start_btn_id_load" style="text-align: center; color: white; background-color: black;" type="button" class="start_btn_load">
+                <video id="start_int_load" class="loading_video" loop muted autoplay>
+                    <source src="{% static 'videos/loading.mp4' %}" type="video/mp4">
+
+                </video>
+
+            </button>
+
+            <br><br><br>
+            <div id="return_home_1" style="margin-right: 20px;" onclick="gotohome()">
+                <span style="font-size: 40px;" id="download_btn" class="material-icons">home</span>
+            <h5 style="color: white;">Home</h5>
+            </div>
+            
+            <div>
+                <p id="permission_denied"></p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="close_meet_div">
+
+        <div class="close_meet" id="Get_Report_Card">
+            <button class="close_btn">
+                <b>Home</b>
+            </button>
+            <div>
+                <span><a id="download_Video_of_Interview" ><br><br><button  type="button" class="Download_class" href=""> <b> Download Videos </b></button></a></span>
+        
+            </div>
+           <br><br>
+        <div id="final_icon_div">
+            
+            <div id="return_home" style="margin-right: 20px;" onclick="gotohome()">
+                <span style="font-size: 40px;" id="download_btn" class="material-icons">home</span>
+            <h5 style="color: white;">Home</h5>
+            </div>
+            
+            <div id="restart_again" style="margin-left: 20px;"  onclick="restart_interview()">
+                <span style="font-size: 40px;" id="download_btn" class="material-icons">restart_alt</span>
+            <h5 style="color: white;">Start Again</h5>
+            </div>
+            
+        </div>
+
+        </div>
+    
+    </div>
+        
+    
+    <!-- scripts for changing buttons active & inactive -->
+    <script type="text/javascript">
+        can_display_popup = false
+
+
+        $("#timer_div").fadeOut(1);
+       var AllUserAnswerintoString=""
+        $("#return_home").fadeOut(1);
+        $("#restart_again").fadeOut(1);
+        
+
+        //$("#download_btn").fadeOut(1);
+
+        $("#end_meet_btn").hover(
+            function () {
+                $(this).text('call_end');
+            },
+            function () {
+                $(this).text('call');
+            });
+
+        /*
+        $(".material-icons").hover(
+            function() {
+                $(this).css('background-color', '#484848');
+            },
+            function() {
+                $(this).css('background-color', '#282828');
+        });
+        */
+
+        function download_video() {
+            console.log("download video function !");
+        }
+
+
+        function mic_toggle() {
+            console.log("mic toggle function !");
+            var btn_status = $("#mic_btn").text();
+            console.log("status :: " + btn_status)
+
+
+            if (btn_status == 'mic') {
+                $("#mic_btn").css('background-color', 'red');
+                $("#mic_btn").text('mic_off');
+                recognition.stop()//For Debugging
+            }
+            else {
+                
+                $("#mic_btn").css('background-color', '#282828');
+                $("#mic_btn").text('mic');
+            }
+        }
+
+        Questions_list=["Ok Do you known what is the function in C Language and explain its associated Type?",
+        "Do you known What is  the use  of printf() in C Language?",
+        "Ok So Let's Move on to the next Question What are the types of Array in C Language?",
+        "Can you Define what are the keywords in C and also tell its appropriate example ?",
+        "which function is used to take input from console in C Language?",
+        "Can you tell me the name of that person who Developed C Programming Language?",
+        "What is the use of main function in C Language?",
+        "Ok Lets get to the next question Define Operator in C Language and also what it's types?",
+        "Ok Can you tell me the what is the use of default keyword?"]
+
+
+        function display_caption(display)
+        {
+            if(display)
+            {
+                console.log("In if of Display caption")
+                //Visible Caption Div
+                $("#caption_div").css("visibility",'visible')
+                
+            }
+            else{
+                
+                $("#caption_div").css("visibility",'hidden')
+                //hidden Caption Div
+            }
+
+        }
+        function caption_toggle()
+        {
+            display=true
+            console.log("caption toggle function !");
+            var btn_status = $("#caption_btn").text();
+            console.log("status :: " + btn_status)
+
+
+            if (btn_status == 'closed_caption') {
+                $("#caption_btn").css('background-color', 'red');
+                $("#caption_btn").text('closed_caption_disabled');
+                //recognition.stop()//For Debugging
+                
+                display_caption(false)
+
+            }
+            else {
+                display_caption(true)
+                $("#caption_btn").css('background-color', '#282828');
+                $("#caption_btn").text('closed_caption');
+            }
+        }
+
+        function camera_toggle() {
+
+            console.log("camera toggle function !");
+            var btn_status = $("#camera_btn").text();
+            console.log("status :: " + btn_status)
+            
+            if (btn_status == 'videocam') {
+                closing_camera()
+                
+                //$("#timer_div").fadeIn(1);
+                startTimer(12);
+                $("#camera_btn").css('background-color', 'red');
+                $("#camera_btn").text('videocam_off');
+            }
+            else {
+                recordVideo();
+                //Web_Cam_fun();              
+                $("#camera_btn").text('videocam');
+                $("#timer_div").fadeOut(1);
+                $("#camera_btn").css('background-color', '#282828');
+
+            }
+        }
+
+        function end_meet() {
+            console.log("end meet function !");
+
+        }
+
+        function more_option_toggle() {
+            console.log("more option toggle function !");
+
+        }
+
+
+
+    </script>
+
+    
+
+
+    <!-- scripts for speech recognition and webcam -->
+    <script type="text/javascript">
+       // recordVideo();
+        
+        var x;
+        function startTimer(timer)
+        {
+            $("#Timer").css('background-color','grey')
+            timer_var=timer;
+            clearInterval(x)
+            $("#Timer").text("")
+            $("#Timer").text(timer_var)
+            $("#timer_div").fadeIn(1);
+            x=setInterval(()=>{
+                //$("#Timer").text(timer_var)
+                document.getElementById("Timer").innerHTML=timer_var
+                timer_var=timer_var-1;
+                if(timer_var<10){
+                    $("#Timer").css('background-color','red')
+                }
+                if(timer_var<-1)
+                {
+                    $("#timer_div").fadeOut(1);
+                    
+                    clearInterval(x)
+                    recordVideo();
+                  // Web_Cam_fun();
+                    $("#camera_btn").css('background-color', '#282828');
+                    $("#camera_btn").text('videocam');
+                }
+            },1000)
+            
+           
+        }
+         
+        function restart_interview(){
+            window.location = "{% url 'start_interview' %}";
+
+        }
+        function gotohome(){
+            window.location = "{% url 'home' %}";
+
+        }
+
+
+        // Initilizating Recognition 
+        Questions_Counter = -1
+        
+        var mic_p_denied = false;
+        var camera_p_denied = false;
+        var mic_p_status = false;
+        var camera_p_status = false;
+
+        var recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        var answers_list = []
+        i = 0;
+        recognition.lang = "en-US";
+        //videoList = ["{% static 'videos/1.mp4' %}","{% static 'videos/2.mp4' %}","{% static 'videos/3.mp4' %}","{% static 'videos/4.mp4' %}","{% static 'videos/5.mp4' %}","{% static 'videos/6.mp4' %}","{% static 'videos/7.mp4' %}","{% static 'videos/9.mp4' %}","{% static 'videos/10.mp4' %}"]
+        
+        const videoElement = document.getElementById('web_cam');
+        
+        listofuseranswer=[];
+        listofuserconfidence=[];
+
+        recognition.onerror = function (event) {
+            var d=event.error;
+            error_msg="Error!"
+            if (d=="no-speech")
+            {
+                error_msg="You are not Audible"
+            }
+            else if(d=="network")
+            {
+                error_msg="We Found that your are facing Network issue"
+            }
+            else if(d=="aborted")
+            {
+                error_msg="Aborted"
+                
+            }
+
+            $(".popup").css('visibility','visible')
+            $("#web_cam").css('border','2px solid red')
+            $("#Error_Messgae").text(error_msg)
+            setTimeout(()=>{
+                $(".popup").css('visibility','hidden')
+                $("#web_cam").css('border','2px solid white')
+            },3000)
+            
+            console.log("Popup is executed")
+            //$("#permission_denied").html("Microphone permission denied ! <br> Please grant Microphone permission !");
+
+            
+
+            mic_p_denied = true;
+
+        }
+
+        var MainVid=document.getElementById("MainVideo")
+        MainVid.addEventListener('ended',myHandler,false);
+
+        function myHandler(e)
+        {
+            can_display_popup = true
+            
+          
+            $("#MainVideo").attr("loop");
+            document.getElementById("MainVideo").src = "{% static 'videos/Expression_vid.mp4' %}";
+                vid = document.getElementById("MainVideo");
+                vid.play();
+                console.log("Video is finished")
+            
+        }
+
+
+        recognition.onend = function () {
+            cal_avg_conf(temp_conf)
+            temp_conf=[]
+            recognition.continuous = true;
+            recognition.abort()
+
+            if(Questions_Counter>=0)
+            {
+
+                listofuseranswer.push("NextAnswer:")
+
+            }
+            console.log(listofuseranswer);
+            if (Questions_Counter==8)
+            {
+                vid.pause();
+                end_call();
+                
+            }
+              
+                $("#MainVideo").removeAttr("loop");
+                vid.pause();
+                document.getElementById("MainVideo").src = videoList[Questions_Counter+1];
+                console.log(Questions_Counter)
+                vid = document.getElementById("MainVideo");
+                vid.play();
+                Questions_Counter+=1
+                $("#caption_text").text(Questions_list[Questions_Counter])
+
+                
+            //console.log('Speech recognition service disconnected');
+            r()
+        };
+
+        function closing_camera() {
+            const video = document.getElementById('web_cam');
+
+            const mediaStream = video.srcObject;
+            const tracks = mediaStream.getTracks();
+
+            // Tracks are returned as an array, so if you know you only have one, you can stop it with: 
+            tracks[0].stop();
+            $("#main_popup").fadeOut()
+            // Or stop all like so:
+            tracks.forEach(track => track.stop())
+
+            
+
+
+
+        }
+        
+
+        function interviwer_invisible() {
+            document.getElementById("MainVideo").style.visibility = "hidden"
+        }
+
+        recognition.addEventListener('speechend', function () {
+            console.log('Speech has stopped being detected');
+         
+        });
+        function cal_avg_conf(temp_conf)
+            {
+                if(temp_conf.length>1)
+                {
+                    const sum = temp_conf.reduce((a, b) => a + b)
+                    avg = sum / temp_conf.length
+                    listofuserconfidence.push(avg)
+                }
+                else{
+                    console.log("Confidence list Length should be Greater than 1 ")
+                    if(temp_conf.length==1)
+                    {
+                        listofuserconfidence.push(temp_conf[0])
+
+                    }
+                }
+
+            }
+
+        function main_fun() {
+            vid = document.getElementById("MainVideo")
+            setTimeout(() => {
+                
+                vid = document.getElementById("MainVideo")
+                vid.play()
+                console.log("Video Finished")
+                $("#caption_div").css("visibility",'visible')
+                $("#caption_text").text("Tell me about your self what do you like and what are you hobby?")
+                console.log("Tell me about your self")
+               
+            }, 1000)
+
+            answers_list = [];
+            temp_conf=[]
+            recognition.onresult = function (event) {
+                transcript = ""
+
+                var current = event.resultIndex;
+                var transcript = event.results[current][0].transcript;
+                var confidence = event.results[current][0].confidence;
+                
+                //starting of Ask for Next Question
+                $.ajax({
+                    type: "POST",
+                    url: 'next_q',
+                    data: { 
+                       'Ans':transcript,
+                       csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    
+                    },
+                    success:function(response){
+                        
+                        console.log("Response....")
+                        console.log(response.status,response.message)
+    
+                        if(response.status)
+                        {
+                            console.log("Mike is Off skip question")
+                            recognition.stop();
+                        }
+                        else
+                        {
+                            console.log("Mike is On.. Don't skip question")
+                        }
+                        
+                        
+                    },
+                    
+                });
+
+
+                
+                
+                
+                //Ending of Ask for Next Question
+
+
+
+                    if(Questions_Counter>=0)
+                    {
+
+                        listofuseranswer.push(transcript)
+                        temp_conf.push(confidence)
+                    }
+
+                recognition.continuous = false;
+                //document.getElementById("p").innerHTML = transcript;
+                console.log(transcript)
+                
+                
+            }
+            
+
+            r()
+        }
+
+        async function r() {
+            if(!end_call_bool){
+
+                await recognition.start();
+                
+            }
+            else
+            {
+               AllUserAnswerintoString=""
+            }
+        }
+       
+        async function recordVideo() {
+
+            const mimeType = 'video/webm';
+            shouldStop = false;
+            const constraints = {
+                video: {
+                    "width": {
+                        "min": 640,
+                        "max": 1024
+                    },
+                    "height": {
+                        "min": 480,
+                        "max": 768
+                    }
+                }
+            };
+            
+
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            videoElement.srcObject = stream;
+            handleRecord({ stream, mimeType })
+            
+           
+
+
+
+
+            //setTimeout(recordScreen, 1000);
+        }
+
+        
+    </script>
+
+    <script>
+
+
+
+
+
+        let shouldStop = false;
+  let stopped = false;
+ 
+  const downloadLink = document.getElementById('download_Video_of_Interview');
+  const stopButton = document.getElementById('stop');
+ /* function startRecord() {
+    
+      $('.btn-info').prop('disabled', true);
+      $('#stop').prop('disabled', false);
+      $('#download_Video_of_Interview').css('display', 'none')
+  }*/
+  function stopRecord() {
+      $('.btn-info').prop('disabled', false);
+      //$('#stop').prop('disabled', true);
+      $('#download_Video_of_Interview').css('display', 'block')
+  }
+  const audioRecordConstraints = {
+      echoCancellation: true
+  }
+
+
+  
+
+ /* stopButton.addEventListener('click', function () {
+      shouldStop = true;
+  });
+*/
+  const handleRecord = function ({stream, mimeType}) {
+     // startRecord()
+      let recordedChunks = [];
+      stopped = false;
+      const mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.ondataavailable = function (e) {
+          if (e.data.size > 0) {
+              recordedChunks.push(e.data);
+          }
+
+          if (shouldStop === true && stopped === false) {
+              mediaRecorder.stop();
+              stopped = true;
+          }
+      };
+
+      mediaRecorder.onstop = function () {
+          const blob = new Blob(recordedChunks, {
+              type: mimeType
+          });
+          recordedChunks = []
+          const filename = "InterviewVideo"
+          downloadLink.href = URL.createObjectURL(blob);
+          downloadLink.download = `${filename || 'recording'}.webm`;
+          stopRecord();
+          videoElement.srcObject = null;
+      };
+
+      mediaRecorder.start(200);
+  };
+
+  async function recordScreen() {
+    
+    const mimeType = 'video/webm';
+    shouldStop = false;
+    const constraints = {
+        video: {
+            cursor: 'motion'
+        }
+    };
+    if(!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia)) {
+        return window.alert('Screen Record not supported!')
+    }
+    let stream = null;
+    console.log("Ask  Screen Permission...")
+    const displayStream = await navigator.mediaDevices.getDisplayMedia({video: {cursor: "motion"}, audio: {'echoCancellation': true}});
+    if(1){
+        const audioContext = new AudioContext();
+
+        const voiceStream = await navigator.mediaDevices.getUserMedia({ audio: {'echoCancellation': true}, video: false });
+        const userAudio = audioContext.createMediaStreamSource(voiceStream);
+        
+        const audioDestination = audioContext.createMediaStreamDestination();
+        userAudio.connect(audioDestination);
+
+        if(displayStream.getAudioTracks().length > 0) {
+            const displayAudio = audioContext.createMediaStreamSource(displayStream);
+            displayAudio.connect(audioDestination);
+        }
+
+        const tracks = [...displayStream.getVideoTracks(), ...
+        audioDestination.stream.getTracks()]
+        stream = new MediaStream(tracks);
+        handleRecord({stream, mimeType})
+    } else {
+        stream = displayStream;
+        handleRecord({stream, mimeType});
+    };
+    
+
+    main_fun()
+    // videoElement.srcObject = stream;
+}
+
+    </script>
+    <!-- Checking Network Speed -->
+    <script type="text/javascript">
+
+        var imageAddr = "https://hackthestuff.com/images/test.jpg";
+        var downloadSize = 13055440;
+        
+        function ShowProgressMessage(msg) {
+            
+        }
+
+        function InitiateSpeedDetection() {
+            ShowProgressMessage();
+            window.setTimeout(MeasureConnectionSpeed, 0);
+        };
+
+        function MeasureConnectionSpeed() {
+            var startTime, endTime;
+            var download = new Image();
+            download.onload = function () {
+                endTime = (new Date()).getTime();
+                showResults();
+            }
+            download.onerror = function (err, msg) {
+                ShowProgressMessage("W");
+            }
+            startTime = (new Date()).getTime();
+            var cacheBuster = "?nnn=" + startTime;
+            download.src = imageAddr + cacheBuster;
+            function showResults() {
+                var duration = (endTime - startTime) / 1000;
+                var bitsLoaded = downloadSize * 8;
+                var speedBps = (bitsLoaded / duration).toFixed(2);
+                var speedKbps = (speedBps / 1024).toFixed(2);
+                var speedMbps = (speedKbps / 1024).toFixed(2);
+
+                if (speedMbps > 1) {
+                    ShowProgressMessage("Your connection speed is "+speedMbps+" Mbps"+speedKbps);
+                } else if (speedKbps > 1) {
+                    ShowProgressMessage("Your connection speed is "+speedKbps+" kbps");
+                } else {
+                    ShowProgressMessage("Your connection speed is "+speedBps+" bps");
+                }
+            }
+        }
+    </script>
+
+
+
+
+    <!-- scripts for accessing camera and mic -->
+    <script type="text/javascript">
+
+
+       
+
+
+        $(".close_btn").click(function(e) {
+
+            e.preventDefault();
+            
+            let AllUserAnswerintoString = listofuseranswer.toString();
+            
+            console.log(AllUserAnswerintoString)
+
+            console.log("user_ans_avail",user_ans_avail)
+            if(user_ans_avail==false)
+            {
+                
+                $(".popup").css('visibility','visible')
+                $("#web_cam").css('border','2px solid red')
+                
+                recognition.stop();
+                $("#return_home").fadeIn(1)
+                $("#restart_again").fadeIn(1)
+
+                $("#Error_Messgae").text("We Found that you have not answered any question")
+                setTimeout(()=>{
+                    $(".popup").css('visibility','hidden')
+                    $("#web_cam").css('border','2px solid white')
+                    
+                },2000)
+                //window.location="{% url 'ex2' %}"
+            }
+
+            let AllUserAnswerConfidenceintoString=listofuserconfidence.toString()
+            if(user_ans_avail)
+            {
+                
+                $.ajax({
+                    type: "POST",
+                    url: 'ex',
+                    data: { 
+                       'Answer':AllUserAnswerintoString,
+                       'Confidence':AllUserAnswerConfidenceintoString,
+                       csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    
+                    },
+                    success:function(response){
+                        
+                        console.log("Response....")
+                        //console.log(AllUserAnswerConfidenceintoString)
+                        console.log(response.status,response.message)
+    
+                        if(response.status)
+                        {
+    
+                            window.location = "{% url 'ex2' %}";
+                        }
+                        
+                        
+                    },
+                    
+                });
+            }
+        });
+
+
+        $(".main").fadeOut(1);
+        $(".start_meet_div").fadeIn(1);
+        $(".close_meet_div").fadeOut(1);
+
+        var user_ans_avail=true
+        var end_call_bool=false
+        function end_call() {
+            $("#caption_div").css("visibility",'hidden')
+            if(listofuseranswer.length==0)
+            {
+                user_ans_avail=false   
+            }
+            console.log("IN end user_ans_avail",user_ans_avail)
+            console.log("listofuseranswer length",listofuseranswer.length)
+            console.log("listofuseranswer",listofuseranswer)
+
+            
+            recognition.stop()
+            
+            shouldStop = true;
+            end_call_bool=true
+            closing_camera();
+            
+            $("#MainVideo").prop("muted",true)
+            $(".main").fadeOut(1);
+            $("#web_cam").fadeOut(1);
+            $(".start_meet_div").fadeOut(1);
+            $(".close_meet_div").fadeIn(1);
+           
+        }
+
+        
+        $("#start_btn_id_load").fadeOut(1);
+        $(".start_btn").click(function (e) {
+            e.preventDefault();
+            
+            if($("#agree_to_terms").is(":checked")){
+                // $(".start_btn").text("")
+
+                //$(".start_btn").css('background-color','black')
+                //$("#start_int_load").css("display")
+                console.log("start_btn clicked !");
+                $(".start_btn").fadeOut(1);
+                $("#start_btn_id_load").fadeIn(1);
+                //alert("checked");
+                setTimeout(()=>{
+                    
+                    $(".main").fadeIn(1);
+                    $("#web_cam").css("visibility","visible")
+                    $(".start_meet_div").fadeOut(1);
+                    $(".close_meet_div").fadeOut(1);
+                    recordScreen();
+                },4500)
+
+
+            }
+            else {
+                $(".popup").css('visibility','visible')
+                
+                $("#web_cam").css('border','2px solid red')
+                $("#Error_Messgae").text(msg)
+                setTimeout(()=>{
+                    $(".popup").css('visibility','hidden')
+                    $("#web_cam").css('border','2px solid white')
+                },3000)
+            }
+
+        });
+
+        
+
+
+    </script>
+
+    
+
+<script>
+    Web_Cam_fun()
+    
+    const parts2=[];
+    let MediaRecorder_new;
+    function Web_Cam_fun()
+    {
+
+        navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(stream =>{
+           
+            videoElement.srcObject=stream;
+        
+                MediaRecorder_new = new MediaRecorder(stream);
+                MediaRecorder_new.start(1000);
+                MediaRecorder_new.ondataavailable=function (e){
+                parts2.push(e.data);
+                }
+            
+            
+            });
+    }
+    
+    document.getElementById("download_Video_of_Interview").onclick=function(){
+    MediaRecorder_new.stop();
+    const blob_new=new Blob(parts2,{
+        type:"video/webm"
+    })
+    const url_new=URL.createObjectURL(blob_new);
+    const a_new=document.createElement("a");
+    document.body.appendChild(a_new);
+    //a.style="display:none"
+    a_new.href=url_new;
+    a_new.download="Video.webm";
+    a_new.click();
+    
+    
+    }
+
+
+</script>
+<!-- start Script For Face Detection -->
+<script type="text/javascript">
+
+ async function showFacepopup(msg)
+    {
+
+        if(can_display_popup)
+        {   
+            
+            console.log("Terminating"+can_display_popup)
+
+            $(".popup").css('visibility','visible')
+            $("#web_cam").css('border','3px solid red')
+            $("#Error_Messgae").text(msg)
+            await setTimeout(()=>{
+                
+                $(".popup").css('visibility','hidden')
+                $("#web_cam").css('border','3px solid white')
+            },3000)  
+        }
+    }
+
+    function check_face_probability(face_probability)
+    {
+        face_probability=face_probability*100
+        
+        var btn_status = $("#camera_btn").text();
+        if(btn_status=="videocam")
+        {
+
+            if (face_probability<80)
+            {
+                showFacepopup("You are not visibile on Camera Please check your face position otherwise your interview will be terminated");
+            }
+            else if (face_probability < 95)
+            {
+                showFacepopup("You are not properly visible either adjust your camera or change your position");        
+            }
+            else{
+                console.log("Good Position")
+            }
+        }
+        else 
+        {
+            console.log("Camera is closed")
+        }
+
+    }
+
+
+
+
+    
+    let video=document.getElementById("video_element");
+    let model;
+    let canvas=document.getElementById("canvas")
+    let ctx=canvas.getContext("2d")
+    error_counter=0
+    const setupCamera = () => {
+        navigator.mediaDevices
+        .getUserMedia({
+            video:{width:600,height:400},
+            audio: false,
+        })
+        .then((stream)=>{
+            video.srcObject=stream;
+        });
+    };
+    
+        const detectFaces = async ()=>{
+           
+            const prediction = await model.estimateFaces(videoElement,false);
+             
+            try
+            {
+
+                face_probability=prediction[0].probability;
+                check_face_probability(face_probability)
+               
+
+            }
+            catch(error)
+            {
+                
+                var btn_status = $("#camera_btn").text();
+
+                if(btn_status=="videocam")
+                {
+                    if(error.name=="TypeError")
+                    {
+                        
+                        if (error_counter>=5 && can_display_popup)
+                        {
+                            //alert(error_counter)
+                            
+                            $(".popup").css('visibility','visible');
+                            $("#web_cam").css('border','2px solid red')
+                            $("#Error_Messgae").text("Your Exam is Terminating...");
+                            console.log("Out of setTimeOut");
+                            setTimeout(()=>{
+                                console.log("In setTimeOut");
+                                $(".popup").css('visibility','hidden');
+                                $("#web_cam").css('border','2px solid white')
+                                window.location = "{% url 'home' %}";                                           
+                            },3000)
+                            
+                                   
+                        }
+                        else{
+                            showFacepopup("Your are not visible at all");
+                        }
+                        if(can_display_popup)
+                        {
+                            error_counter = error_counter + 1 
+                            console.log("Error_Counter:",error_counter)
+                            console.log("can_display_popup val:",can_display_popup)
+                        }
+                        console.log(error_counter)
+                    }
+                }
+                else 
+                {
+                    console.log("Camera is closed in Catch block")
+                }
+            }
+
+            ctx.drawImage(videoElement,0,0,600,400);
+            prediction.forEach((pred) => {
+                ctx.beginPath();
+                ctx.lineWidth="4";
+                ctx.strokeStyle="blue"
+                ctx.rect(
+                    pred.topLeft[0],
+                    pred.topLeft[1],
+                pred.bottomRight[0] - pred.topLeft[0],
+                pred.bottomRight[1] - pred.topLeft[1]
+    
+                );
+                //ctx.stroke();
+    
+               
+            });
+        };
+    
+    
+    
+    //setupCamera();
+    videoElement.addEventListener("loadeddata",async () =>{
+        
+        model= await blazeface.load();
+        setInterval(detectFaces,7000)
+    });
+    
+    
+        </script>
+    
+<!-- End  Script For Face Detection -->
+
+    <!-- End scripts here -->
+
+    
+</body>
+
+
+</html>

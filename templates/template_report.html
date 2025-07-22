@@ -1,0 +1,238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+
+    <style>
+
+      .report_table_div {
+        /*border: 3px solid pink;*/
+        padding-right: 20px;
+        padding-left: 20px;
+      
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+         justify-content: center;
+         /*background-color: #F0FFF0;*/
+    }
+
+    table, th, td{
+      padding: 12px 12px;
+          border:2px solid rgb(30, 255, 0);
+;
+      border-collapse: collapse;
+      background-color: #F8F8FF;
+  }
+  th {
+      min-width: 100px;
+      border:2px solid red;      
+      
+  }
+  .row_srno {
+      min-width: 50px;
+      max-width: 60px;
+      width: 30px;
+          border:2px solid rgb(30, 255, 0);
+;
+      min-height: 100px;
+      max-height: 150px;
+      height: 30px;
+  }
+  .row_question {
+      min-width: 110px;
+     max-width: fit-content;
+         border:2px solid rgb(30, 255, 0);
+; 
+      min-height: 100px;
+      max-height: 150px;
+      height: 30px;
+  }
+  .row_accuracy {
+      min-width: 50px;
+      max-width: 80px;
+         border:2px solid rgb(30, 255, 0);
+;
+      min-height: 100px;
+      max-height: 150px;
+      height: 30px;
+  }
+  .row_confidence {
+      min-width: 50px;
+      max-width: 80px;
+          border:2px solid rgb(30, 255, 0);
+;
+      min-height: 100px;
+      max-height: 150px;
+      height: 30px;
+  }
+  
+  #Question,#Accuracy,#Srno,#Confidence{
+    max-height: 100px;
+        border:2px solid rgb(30, 255, 0);
+;
+  }
+
+  .first_row{
+    border:2px solid rgb(30, 255, 0);
+  }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Right Resume</title>
+    <!-- <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script> -->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"> </script>
+
+    
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&amp;family=Roboto:wght@300;400;500;700&amp;display=swap"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&amp;family=Roboto:wght@300;400;500;700&amp;display=swap" media="print" onload="this.media='all'"/>
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&amp;family=Roboto:wght@300;400;500;700&amp;display=swap"/>
+    </noscript>
+    <link href="{% static 'Report/css/font-awesome/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Report/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Report/css/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'Report/css/main.css' %}" rel="stylesheet">
+    
+    <noscript>
+      <style type="text/css">
+        [data-aos] {
+            opacity: 1 !important;
+            transform: translate(0) scale(1) !important;
+        }
+
+
+      </style>
+    </noscript>
+  </head>
+  <body id="top">
+  
+    <div class="page-content" id="invoice">
+      <div class="container">
+<div class="cover shadow-lg bg-white">
+  <div class="cover-bg p-3 p-lg-4 text-white">
+    <div class="row">
+      <div class="col-lg-4 col-md-5">
+       
+        <h6 style="text-align: right; position:absolute;right: 6%;">Date:{{today}}</h6>
+        <br>
+         
+        <div style="margin-bottom:5%;" class="avatar hover-effect bg-white shadow-sm p-1" >
+          
+
+          {%if profile_img == True %}
+          <img id="dp_img" src="{% static 'images/NoProfile.png' %}" alt="empty" width="200" height="200" />                   
+          {% else %}
+          <img id="dp_img" src="{{user_data.image_dp}}" alt="empty" width="200" height="200" />
+        
+          {% endif %}
+          
+          <!-- <img src="{{user_data.image_dp}}" width="200" height="200" /> -->
+
+
+
+      </div>
+       <h5>Result:{{grade}}</h5>
+      </div>
+      <h2 class="h1 mt-2" style="text-align: right; position:absolute;right: 27%;top: 100px;" >{{request.user.first_name}}  {{request.user.last_name}}</h2> 
+      <div style="text-align: right; position:absolute;">
+      <h6 style="text-align: right; position:relative; right: 12%;top: 180px;"><b>Email:{{request.user.email}}</b></h6>
+      <h6 style="text-align: right; position:relative; right: 22%;top: 190px;"><b>Contact:{{user_data.contact}}</b></h6> 
+    </div>
+ 
+    </div>
+  </div>
+  <style>
+   .about_section{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   }
+
+  
+  </style>
+
+  <div class="about_section">
+    
+    
+
+    
+   <div class="user_detail">
+    
+  </div>
+  </div>
+  <!-- <hr class="d-print-none"/>
+
+  <hr class="d-print-none"/> -->
+  <div class="report_table_div">
+    <br>
+    <table>
+        <tr>
+            <th colspan="10" class="first_row"><b><center>Interview Report</center></b></td>
+        </tr>
+        
+        <tr >
+            <th  id="Srno" colspan="1">Sr. No. </td>
+            <th id="Question" colspan="3"><b><center>Question</center> </b></td>
+            <th id="Accuracy" colspan="3"><b>Accuracy</b></td>
+            <th id="Confidence"  colspan="3"><b>Confidence</b></td>
+        </tr>
+        {% for i,q,c,ans in mylist %}
+        <tr>
+            <th class="row_srno" colspan="1">{{q}}</td>
+            <th class="row_question" colspan="3"> {{ i }}</td>
+            <th class="row_accuracy" colspan="3">{{ans}}%</td>
+            <th class="row_confidence" colspan="3">{{c}}%</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <br>
+      
+    </div>
+ 
+
+</div>
+
+
+
+
+</div>
+<div class="pb-1 text-secondary" ><h6 style="color: rgb(10, 87, 29); margin-bottom:20px"><center>{{quote}}</center></h5></div>
+</div>
+    <script src="{% static 'Report/scripts/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'Report/scripts/aos.js' %}"></script>
+    <script src="{% static 'Report/scripts/main.js' %}"></script>
+   
+  </body>
+  <script>
+    function generatePDF()
+    {
+      const element=document.getElementById("invoice")
+      html2pdf().from(element).save();
+
+
+      try
+      {
+        
+        html2pdf.set({filename:js.AutoCode()+'.pdf'}).save();
+        setTimeout(()=>{
+
+          window.location = "{% url 'home' %}";
+        },1000)
+      }
+      catch
+      {
+        
+        setTimeout(()=>{
+
+          window.location = "{% url 'home' %}";
+        },1000);
+      }
+    }
+   generatePDF()
+  </script>
+</html>
